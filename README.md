@@ -2,14 +2,16 @@
 
 ## What is this?
 
-The world will love bots until they take over. `votebot` is a bot for [Slack](https://slack.com/) which allows you to ... well, vote!
-`votebot` is built using Python on AWS Lambda and driven by the Outgoing Webhook integration in Slack. 
+The world will love bots until they take over. Until the, we'll keep making them! `votebot` is a bot for [Slack](https://slack.com/)
+which allows you to ... well, vote! `votebot` is built using Python on AWS Lambda and driven by the Outgoing Webhook
+integration in Slack. 
 
 ## Under the hood
 
 The options for `votebot` are stored in a DynamoDB table for persistence between Lambda function runs. The hash key is 
 titled `selection` and a second attrbute called `options` stores each votable option. They are stored as comma-separated
-values. For each option, the following convention is used:
+values. There is a another attribute, called `icon_emoji` which allows you to customize the reaction emoji that users
+can click on. For each option, the following convention is used:
 
 ```
 Title / description1 / description2 / description3,
@@ -154,4 +156,4 @@ To set up IAM, run setup_iam.sh. The role will be named `votebot`.
 
 ## More information
 
-See the [blog post](blog.fugue.co) for setup, packaging, and deployment!
+See the [Fugue blog](https://blog.fugue.co/2015-10-15-votebot.html) for a walkthrough of setup, packaging, and deployment!
