@@ -46,6 +46,19 @@ def lambda_handler(event, context):
     elif 'ping' == text[1]:
         retval['text'] = 'pong'
 
+    elif 'help' == text[1]:
+        retval['text'] = 'You can use the following commands: help , ping , list , open , close.'
+
+    elif 'list' == text[1]:
+        ltable = ddb.Table(table_vote_options)
+        list_res = ltable.scan()
+        listed = []
+        for i in list_res['Items']:
+              listed.append(i['selection'])
+        thelist = "The following votes can be cast: "
+        thelist += " , ".join(listed)
+        slack.chat.post_message(channel=channel_name, text=thelist, as_user=True)
+
     elif 'open' == text[1]:
         try:
             selection = text[2]
