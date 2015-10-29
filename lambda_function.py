@@ -3,7 +3,7 @@ import os
 import time
 import urllib
 from collections import defaultdict
-from slacker import Slacker
+from slacker import Error, Slacker
 
 datestr = '%m/%d/%Y-%H:%M:%S'
 table_vote_options = 'vote-options'
@@ -74,25 +74,24 @@ def lambda_handler(event, context):
                              'To close voting, please enter `votebot close {}`'.format(requesting_user, selection, vote_id),
                 resp = slack.chat.post_message(channel=channel_name, text=slack_text, as_user=True)
 
-                if not resp.body['ok']:
-                    retval['text'] = 'Response from Slack was not ok'
-                else:
-                    # For each option, write a message and make a reaction emoji
-                    timestamps = []
-                    for option in options.split(delimiter):
-                        opt_resp = slack.chat.post_message(channel=channel_name, text=option.lstrip(), as_user=True)
-                        timestamps.append(opt_resp.body['ts'])
-                        slack.reactions.add(name=icon_emoji, channel=opt_resp.body['channel'], timestamp=opt_resp.body['ts'])
-                        time.sleep(.5)  # Try not to get throttled by Slack
+                # For each option, write a message and make a reaction emoji
+                timestamps = []
+                for option in item['options'].split(delimiter):
+                    opt_resp = slack.chat.post_message(channel=channel_name, text=option.strip(), as_user=True)
+                    timestamps.append(opt_resp.body['ts'])
+                    slack.reactions.add(name=icon_emoji, channel=opt_resp.body['channel'], timestamp=opt_resp.body['ts'])
+                    time.sleep(.5)  # Try not to get throttled by Slack
 
-                    # Now write the open vote to vote-open table
-                    print('writing vote {}'.format(vote_id))
-                    open_votes_table = ddb.Table(table_vote_open)
-                    open_votes_table.put_item(Item={
-                        'vote': vote_id,
-                        'line_timestamps': delimiter.join(timestamps),
-                        'channel': resp.body['channel'],
-                    })
+                # Now write the open vote to vote-open table
+                print('writing vote {}'.format(vote_id))
+                open_votes_table = ddb.Table(table_vote_open)
+                open_votes_table.put_item(Item={
+                    'vote': vote_id,
+                    'line_timestamps': delimiter.join(timestamps),
+                    'channel': resp.body['channel'],
+                })
+        except Error as e:
+            retval['text'] = 'Slack responded with error {}'.format(str(e))
         except Exception as e:
             retval['text'] = 'Error: {}'.format(str(e))
 
