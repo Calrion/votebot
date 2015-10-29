@@ -63,15 +63,13 @@ def lambda_handler(event, context):
         try:
             selection = text[2]
             table = ddb.Table(table_vote_options)
-            res = table.get_item(Key={'selection': selection})
-            if 'Item' not in res:
-                retval['text'] = '{} not a valid selection'.format(selection)
+            get_result = table.get_item(Key={'selection': selection})
+            if 'Item' not in get_result:
+                retval['text'] = '{} is not a valid selection'.format(selection)
             else:
-                item = res['Item']
-                options = item['options']
+                item = get_result['Item']
                 icon_emoji = item.get('icon_emoji', 'ballot_box_with_check')
-                # Voting is open!
-                vote_id = '-'.join([selection, time.strftime(datestr)])
+                vote_id = '-'.join([selection, time.strftime(datestr)])  # Voting is open
                 slack_text = '<!here> {} has opened voting for `{}`. Please vote by clicking on an emoji! ' \
                              'To close voting, please enter `votebot close {}`'.format(requesting_user, selection, vote_id),
                 resp = slack.chat.post_message(channel=channel_name, text=slack_text, as_user=True)
@@ -103,11 +101,11 @@ def lambda_handler(event, context):
             vote_id = urllib.unquote(text[2])
             print('looking up vote id {}'.format(vote_id))
             table = ddb.Table(table_vote_open)
-            res = table.get_item(Key={'vote': vote_id})
-            if 'Item' not in res:
+            get_result = table.get_item(Key={'vote': vote_id})
+            if 'Item' not in get_result:
                 retval['text'] = '{} is not an open vote'.format(vote_id)
             else:
-                item = res['Item']
+                item = get_result['Item']
                 votes_from_slack = defaultdict(list)
                 total = 0
                 for ts in item['line_timestamps'].split(delimiter):
