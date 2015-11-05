@@ -22,7 +22,7 @@ command_handlers = {}
 
 
 class AlreadyRegisteredException(Exception):
-    """ Except which is thrown when a handler is registered which matches the name of an
+    """ Exception which is thrown when a handler is registered which matches the name of an
     already registered handler.
     """
     pass
@@ -48,7 +48,7 @@ def handler(command):
 
 
 @handler(command='ping')
-def ping():
+def ping(*args, **kwargs):
     """ Responds to 'ping' with a 'pong' response.
     """
     return {
@@ -57,7 +57,7 @@ def ping():
 
 
 @handler(command='help')
-def help():
+def help(*args, **kwargs):
     """ Responses with the commands supported by votebot.
     """
     return {
@@ -66,7 +66,7 @@ def help():
 
 
 @handler(command='list')
-def list(params):
+def list(params, *args, **kwargs):
     """ Reads the table containing the types of votes which can be opened and displays it back to the user.
     """
     ltable = ddb.Table(table_vote_options)
