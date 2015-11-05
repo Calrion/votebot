@@ -48,7 +48,7 @@ def handler(command):
 
 
 @handler(command='ping')
-def ping(*args, **kwargs):
+def ping_h(*args, **kwargs):
     """ Responds to 'ping' with a 'pong' response.
     """
     return {
@@ -57,7 +57,7 @@ def ping(*args, **kwargs):
 
 
 @handler(command='help')
-def help(*args, **kwargs):
+def help_h(*args, **kwargs):
     """ Responses with the commands supported by votebot.
     """
     return {
@@ -66,7 +66,7 @@ def help(*args, **kwargs):
 
 
 @handler(command='list')
-def list(params, *args, **kwargs):
+def list_h(params, *args, **kwargs):
     """ Reads the table containing the types of votes which can be opened and displays it back to the user.
     """
     ltable = ddb.Table(table_vote_options)
@@ -79,7 +79,7 @@ def list(params, *args, **kwargs):
 
 
 @handler(command='open')
-def open(params, text):
+def open_h(params, text):
     """ Opens voting for an option configured in the voting options table. The vote is recorded in the
     open votes table.
     """
@@ -119,7 +119,7 @@ def open(params, text):
 
 
 @handler(command='close')
-def close(params, text):
+def close_h(params, text):
     """ Closes an open vote located in the open votes table.
     """
     retval = {}
