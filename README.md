@@ -6,6 +6,16 @@ The world will love bots until they take over. Until then, we'll keep making the
 which allows you to ... well, vote! `votebot` is built using Python on AWS Lambda and driven by the Outgoing Webhook
 integration in Slack. 
 
+## Supported commands
+
+```
+ping
+help
+list
+open
+close
+```
+
 ## Under the hood
 
 The options for `votebot` are stored in a DynamoDB table for persistence between Lambda function runs. The hash key is 
